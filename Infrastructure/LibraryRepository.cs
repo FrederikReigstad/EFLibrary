@@ -25,11 +25,28 @@ public class LibraryRepository
         }
         
     }
+    
+    public Student InsertStudent(Student student)
+    {
+        using( var context = new DbContext(_opts, ServiceLifetime.Scoped))
+        {
+            context.Student.Add(student);
+            context.SaveChanges();
+            return student;
+        }
+        
+    }
 
     public List<Book> SelectAllBooks()
     {
         using var context = new DbContext(_opts, ServiceLifetime.Scoped);
         return context.Book.ToList();
+    }
+    
+    public List<Student> SelectAllStudents()
+    {
+        using var context = new DbContext(_opts, ServiceLifetime.Scoped);
+        return context.Student.ToList();
     }
 
 
@@ -119,6 +136,32 @@ public class LibraryRepository
             return existingBook;
         }
     }
+    
+    public Student PatchStudent(Student student)
+    {
+        using (var context = new DbContext(_opts, ServiceLifetime.Scoped))
+        {
+            Student existingStudent = context.Student.Find(student.Id) ?? throw new InvalidOperationException();
+            if (existingStudent == null)
+            {
+                throw new KeyNotFoundException("Could not find by ID " + student.Id);
+            }
+
+            foreach (PropertyInfo prop in student.GetType().GetProperties())
+            {
+                var propertyName = prop.Name;
+                var value = prop.GetValue(student);
+                if (value != null)
+                {
+                    existingStudent.GetType().GetProperty(propertyName)!.SetValue(existingStudent, value);
+                }
+            }
+
+            context.Update(existingStudent);
+            context.SaveChanges();
+            return existingStudent;
+        }
+    }
 
     public Book UpsertBook(Book book)
     {
@@ -135,6 +178,24 @@ public class LibraryRepository
             }
 
             return book;
+        }
+    }
+    
+    public Student UpsertBook(Student student)
+    {
+        using (var context = new DbContext(_opts, ServiceLifetime.Scoped))
+        {
+            var existingEntity = context.Student.Find(student.Id);
+            if (existingEntity == null)
+            {
+                student = InsertStudent(student);
+            }
+            else
+            {
+                student = PatchStudent(student);
+            }
+
+            return student;
         }
     }
 

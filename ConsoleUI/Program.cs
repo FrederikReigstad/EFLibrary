@@ -15,6 +15,9 @@ void PresentOptions()
     Console.WriteLine("5: Create a new author");
     Console.WriteLine("6: Delete an author and their books");
     Console.WriteLine("7: Rebuild DB (useful in case of schema changes)");
+    Console.WriteLine("8 Create Student");
+    Console.WriteLine("9 List Student");
+
 }
 
 void PickOption()
@@ -41,6 +44,12 @@ void PickOption()
     } else if (input.Equals("7"))
     {
         RebuildDB();
+    } else if (input.Equals("8"))
+    {
+        InsertStudent();
+    } else if (input.Equals("9"))
+    {
+        ListAllStudents();
     }
 
 }
@@ -67,6 +76,15 @@ void ListAllBooks()
     }
 }
 
+
+void ListAllStudents()
+{
+    foreach (Student student in libraryRepository.SelectAllStudents())
+    {
+        Console.WriteLine("Stundet number "+student.Id+": "+student.StudentName);
+    }
+}
+
 void InsertBook()
 {
     Console.WriteLine("Book title: ");
@@ -78,6 +96,17 @@ void InsertBook()
     int authorId = Int32.Parse(Console.ReadLine());
     book.AuthorId = authorId;
     libraryRepository.InsertBook(book);
+    Console.WriteLine("Insertion complete");
+    
+}
+
+void InsertStudent()
+{
+    Console.WriteLine("Student Name: ");
+    var studentName = Console.ReadLine();
+    var student = new Student();
+    student.StudentName = studentName;
+    libraryRepository.InsertStudent(student);
     Console.WriteLine("Insertion complete");
     
 }
