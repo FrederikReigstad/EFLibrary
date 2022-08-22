@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace infrastructure;
+namespace  infrastructure;
 
 public class DbContext: Microsoft.EntityFrameworkCore.DbContext
 {
@@ -32,6 +32,8 @@ public class DbContext: Microsoft.EntityFrameworkCore.DbContext
         modelBuilder.Entity<Author>()
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
+        //STUDENT MODEL BUILDER
+        //Auto generate ID
         modelBuilder.Entity<Student>()
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
